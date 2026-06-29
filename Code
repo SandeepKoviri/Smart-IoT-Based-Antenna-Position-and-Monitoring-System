@@ -1,0 +1,234 @@
+#define BLYNK_TEMPLATE_ID "YOUR TEMPLATE ID"
+#define BLYNK_TEMPLATE_NAME "smartAntenna"
+#define BLYNK_AUTH_TOKEN "YOUR TOKEN"
+
+#include <WiFi.h>
+#include <BlynkSimpleEsp32.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+#include <ESP32Servo.h>
+#include "DHT.h"
+
+// -------- WiFi --------
+char ssid[] = "A";
+char pass[] = "12345678";
+
+// -------- LCD --------
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+// -------- Servo --------
+Servo servoX, servoY;
+#define SERVO_X_PIN 18
+#define SERVO_Y_PIN 19
+
+// -------- DHT --------
+#define DHTPIN 4
+#define DHTTYPE DHT11
+DHT dht(DHTPIN, DHTTYPE);
+
+// -------- Variables --------
+int xAngle = 90;
+int yAngle = 90;
+
+bool autoMode = false;
+bool scanning = false;
+
+// -------- BLYNK CONTROL --------
+
+// X Slider (Manual)
+BLYNK_WRITE(V0)
+{
+  if(!autoMode)
+  {
+    xAngle = param.asInt();
+    servoX.write(xAngle);
+  }
+}
+
+// Y Slider (Manual)
+BLYNK_WRITE(V1)
+{
+  if(!autoMode)
+  {
+    yAngle = param.asInt();
+    servoY.write(yAngle);
+  }
+}
+
+// Mode Switch
+BLYNK_WRITE(V2)
+{
+  autoMode = param.asInt();
+
+  if(autoMode)
+  {
+    scanning = true; // start scan
+  }
+}
+
+// -------- RSSI --------
+int getStableRSSI()
+{
+  int total = 0;
+  for(int i=0;i<3;i++)
+  {
+    total += WiFi.RSSI();
+    delay(100);
+  }
+  return total/3;
+}
+
+// -------- LCD UPDATE (YOUR FINAL UI) --------
+void updateLCD(int rssi, float temp, float hum, char mode)
+{
+  if(isnan(temp) || isnan(hum))
+  {
+    temp = 0;
+    hum = 0;
+  }
+
+  lcd.setCursor(0,0);
+  lcd.print("X:");
+  if(xAngle < 100) lcd.print(" ");
+  if(xAngle < 10)  lcd.print(" ");
+  lcd.print(xAngle);
+
+  lcd.print(" Y:");
+  if(yAngle < 100) lcd.print(" ");
+  if(yAngle < 10)  lcd.print(" ");
+  lcd.print(yAngle);
+
+  lcd.print(" T:");
+  lcd.print((int)temp);
+  lcd.print(" ");
+
+  lcd.setCursor(0,1);
+  lcd.print("R:");
+  lcd.print(rssi);
+  lcd.print("   ");
+
+  lcd.setCursor(9,1);
+  lcd.print("H:");
+  lcd.print((int)hum);
+
+  lcd.setCursor(15,1);
+  lcd.print(mode);
+}
+
+// -------- SEND DATA TO BLYNK --------
+void sendToBlynk(int rssi, float temp, float hum)
+{
+  // X Y display
+  Blynk.virtualWrite(V7, xAngle);
+  Blynk.virtualWrite(V8, yAngle);
+
+  // Sensors
+  Blynk.virtualWrite(V4, temp);
+  Blynk.virtualWrite(V5, hum);
+
+  // RSSI Graph
+  Blynk.virtualWrite(V3, rssi);
+}
+
+// -------- AUTO SCAN --------
+void autoScan()
+{
+  int bestRSSI = -1000;
+  int bestX = 90, bestY = 90;
+
+  for(int x=0; x<=180; x+=30)
+  {
+    for(int y=0; y<=180; y+=30)
+    {
+      servoX.write(x);
+      servoY.write(y);
+
+      xAngle = x;
+      yAngle = y;
+
+      delay(300);
+
+      int rssi = getStableRSSI();
+      float temp = dht.readTemperature();
+      float hum  = dht.readHumidity();
+
+      updateLCD(rssi, temp, hum, 'S');
+      sendToBlynk(rssi, temp, hum);
+
+      if(rssi > bestRSSI)
+      {
+        bestRSSI = rssi;
+        bestX = x;
+        bestY = y;
+      }
+    }
+  }
+
+  // Move to best position
+  servoX.write(bestX);
+  servoY.write(bestY);
+
+  xAngle = bestX;
+  yAngle = bestY;
+
+  scanning = false;
+}
+
+// -------- SETUP --------
+void setup()
+{
+  Serial.begin(115200);
+
+  lcd.init();
+  lcd.backlight();
+
+  lcd.print("Connecting WiFi");
+
+  WiFi.begin(ssid, pass);
+
+  while(WiFi.status() != WL_CONNECTED)
+  {
+    delay(500);
+  }
+
+  lcd.clear();
+  lcd.print("WiFi Connected");
+  delay(1500);
+
+  Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
+
+  lcd.clear();
+  lcd.print("Blynk Ready");
+  delay(1500);
+  lcd.clear();
+
+  servoX.attach(SERVO_X_PIN);
+  servoY.attach(SERVO_Y_PIN);
+
+  dht.begin();
+}
+
+// -------- LOOP --------
+void loop()
+{
+  Blynk.run();
+
+  float temp = dht.readTemperature();
+  float hum  = dht.readHumidity();
+  int rssi = getStableRSSI();
+
+  if(autoMode && scanning)
+  {
+    autoScan();
+  }
+
+  char mode;
+  if(scanning) mode = 'S';
+  else if(autoMode) mode = 'A';
+  else mode = 'M';
+
+  updateLCD(rssi, temp, hum, mode);
+  sendToBlynk(rssi, temp, hum);
+
+  delay(1000);
+}
