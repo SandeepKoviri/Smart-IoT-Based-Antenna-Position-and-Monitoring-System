@@ -172,22 +172,28 @@ Smart-IoT-Antenna-Positioning-System/
 
 # 📸 Project Images
 
+![alt text](<picture/WhatsApp Image 2026-05-12 at 5.28.38 AM.jpeg>)
+---
+
 ## Hardware Prototype
 
+![alt text](<picture/WhatsApp Image 2026-05-12 at 5.28.39 AM.jpeg>)
 
 ---
 
 ## LCD Output
 
-
+![alt text](<picture/IMG202605120517581.jpg>)
 ---
 
 ## Blynk Dashboard
 
+![alt text](<picture/Screenshot 2026-05-12 051508.png>)
 ---
 
 ## Circuit Diagram
 
+![alt text](<picture/Screenshot 2026-02-27 102001.png>)
 
 ---
 
