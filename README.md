@@ -171,29 +171,28 @@ Smart-IoT-Antenna-Positioning-System/
 ---
 
 # 📸 Project Images
+<img src="picture/WhatsApp Image 2026-05-12 at 5.28.38 AM.jpeg" width="50%">
 
-![alt text](<picture/WhatsApp Image 2026-05-12 at 5.28.38 AM.jpeg>)
 ---
 
 ## Hardware Prototype
-
-![alt text](<picture/WhatsApp Image 2026-05-12 at 5.28.39 AM.jpeg>)
+<img src="picture/WhatsApp Image 2026-05-12 at 5.28.39 AM.jpeg" width="50%">
 
 ---
 
 ## LCD Output
+<img src="picture/IMG202605120517581.jpg" width="50%">
 
-![alt text](<picture/IMG202605120517581.jpg>)
 ---
 
 ## Blynk Dashboard
+<img src="picture/Screenshot 2026-05-12 051508.png" width="50%">
 
-![alt text](<picture/Screenshot 2026-05-12 051508.png>)
 ---
 
 ## Circuit Diagram
+<img src="picture/Screenshot 2026-02-27 102001.png" width="50%">
 
-![alt text](<picture/Screenshot 2026-02-27 102001.png>)
 
 ---
 
@@ -233,5 +232,12 @@ Passionate about:
 If you like this project, consider giving it a **⭐ Star** on GitHub.
 
 It helps others discover the project and motivates future improvements.
+---
+# 🤝 Contact KOVIRI SANDEEP
 
+Gmail: koviri.sandeep@gmail.com
+
+LinkedIn: www.linkedin.com/in/kovirisandeep
+
+Project Link: [https://github.com/SandeepKoviri/AI-powered-IoT-Plant-Disease-Detector.git](https://github.com/SandeepKoviri/Smart-IoT-Based-Antenna-Position-and-Monitoring-System.git)
 ---
