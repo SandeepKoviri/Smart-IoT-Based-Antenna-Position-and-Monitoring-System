@@ -232,5 +232,12 @@ Passionate about:
 If you like this project, consider giving it a **⭐ Star** on GitHub.
 
 It helps others discover the project and motivates future improvements.
+---
+# 🤝 Contact KOVIRI SANDEEP
 
+Gmail: koviri.sandeep@gmail.com
+
+LinkedIn: www.linkedin.com/in/kovirisandeep
+
+Project Link: [https://github.com/SandeepKoviri/AI-powered-IoT-Plant-Disease-Detector.git](https://github.com/SandeepKoviri/Smart-IoT-Based-Antenna-Position-and-Monitoring-System.git)
 ---
